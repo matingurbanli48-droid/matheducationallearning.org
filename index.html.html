@@ -14,9 +14,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      padding: 2rem 1rem;
       min-height: 100vh;
-      padding: 2rem;
     }
     .title {
       font-family: 'Courier New', monospace;
@@ -27,13 +26,44 @@
       text-align: center;
       margin-bottom: 1.5rem;
     }
-    #games {
+    .proxy-bar {
+      display: flex;
+      gap: 8px;
       width: 100%;
       max-width: 800px;
+      margin-bottom: 1rem;
     }
-    /* Force Lumin's background to be transparent */
-    #games > * {
-      background: transparent !important;
+    .proxy-bar input {
+      flex: 1;
+      padding: 10px 16px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid #00ff41;
+      border-radius: 6px;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      outline: none;
+    }
+    .proxy-bar input::placeholder { color: rgba(0,255,65,0.4); }
+    .proxy-bar button {
+      padding: 10px 20px;
+      background: #00ff41;
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .proxy-bar button:hover { background: #00cc33; }
+    #browser {
+      width: 100%;
+      max-width: 800px;
+      height: 75vh;
+      border: 1px solid #00ff41;
+      border-radius: 6px;
+      background: #000;
     }
   </style>
 </head>
@@ -41,10 +71,32 @@
   <canvas id="matrix"></canvas>
   <div class="content">
     <div class="title">matins awesome website</div>
-    <div id="games"></div>
+    <div class="proxy-bar">
+      <input id="searchInput" type="text" placeholder="Search or enter a URL..." />
+      <button onclick="navigate()">GO</button>
+    </div>
+    <iframe id="browser" src="https://duckduckgo.com/?kae=d&k1=-1" frameborder="0"></iframe>
   </div>
 
   <script>
+    function navigate() {
+      const val = document.getElementById('searchInput').value.trim();
+      if (!val) return;
+      let url;
+      if (val.startsWith('http://') || val.startsWith('https://')) {
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+      } else if (val.includes('.') && !val.includes(' ')) {
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+      } else {
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+      }
+      document.getElementById('browser').src = url;
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') navigate();
+    });
+
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -69,11 +121,6 @@
       }
     }
     setInterval(draw, 33);
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
-  <script>
-    Lumin.init({ container: '#games', theme: 'dark' });
   </script>
 </body>
 </html>
