@@ -23,7 +23,6 @@
       color: #00ff41;
       text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
       letter-spacing: 0.1em;
-      text-align: center;
       margin-bottom: 1.5rem;
     }
     .proxy-bar {
@@ -36,10 +35,10 @@
     .proxy-bar input {
       flex: 1;
       padding: 10px 16px;
-      background: rgba(0, 255, 65, 0.1);
+      background: rgba(0,255,65,0.1);
       border: 1px solid #00ff41;
       border-radius: 6px;
-      color: #00ff41;
+        color: #00ff41;
       font-family: 'Courier New', monospace;
       font-size: 1rem;
       outline: none;
@@ -54,7 +53,6 @@
       font-family: 'Courier New', monospace;
       font-weight: 700;
       cursor: pointer;
-      font-size: 1rem;
     }
     .proxy-bar button:hover { background: #00cc33; }
     #browser {
@@ -63,7 +61,6 @@
       height: 75vh;
       border: 1px solid #00ff41;
       border-radius: 6px;
-      background: #000;
     }
   </style>
 </head>
@@ -75,25 +72,27 @@
       <input id="searchInput" type="text" placeholder="Search or enter a URL..." />
       <button onclick="navigate()">GO</button>
     </div>
-    <iframe id="browser" src="https://duckduckgo.com/?kae=d&k1=-1" frameborder="0"></iframe>
+    <iframe id="browser" frameborder="0"></iframe>
   </div>
 
+  <script src="/uv/uv.bundle.js"></script>
+  <script src="/uv/uv.config.js"></script>
   <script>
-    function navigate() {
+    async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
-        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+        url = val;
       } else if (val.includes('.') && !val.includes(' ')) {
-        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+        url = 'https://' + val;
       } else {
-        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d&k1=-1';
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d';
       }
-      document.getElementById('browser').src = url;
+      document.getElementById('browser').src = __uv$config.prefix + __uv$config.encodeUrl(url);
     }
 
-    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    document.getElementById('searchInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') navigate();
     });
 
