@@ -6,33 +6,43 @@
   <title>Matins Awesome Website</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; overflow-x: hidden; }
-    canvas { position: fixed; top: 0; left: 0; z-index: 0; }
-    .title {
+    body { background: #000; min-height: 100vh; }
+    canvas { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
+    .content {
       position: relative;
       z-index: 10;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .title {
       font-family: 'Courier New', monospace;
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: #00ff41;
       text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
       letter-spacing: 0.1em;
       text-align: center;
-      padding: 1rem;
+      margin-bottom: 1.5rem;
     }
     #games {
-      position: relative;
-      z-index: 10;
+      width: 100%;
+      max-width: 800px;
+    }
+    /* Force Lumin's background to be transparent */
+    #games > * {
+      background: transparent !important;
     }
   </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
-  <div class="title">matins awesome website</div>
-  <div id="games"></div>
+  <div class="content">
+    <div class="title">matins awesome website</div>
+    <div id="games"></div>
+  </div>
 
   <script>
     const canvas = document.getElementById('matrix');
