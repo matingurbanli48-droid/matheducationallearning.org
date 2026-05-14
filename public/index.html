@@ -116,7 +116,11 @@
     });
   </script>
 
-  <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
-  <script>Lumin.init({ container: '#games', theme: 'dark' });</script>
+<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js" onerror="document.getElementById('games').innerHTML='<p style=\'color:#00ff41;font-family:Courier New\'>Games failed to load</p>'"></script>
+<script>
+  if (typeof Lumin !== 'undefined') {
+    Lumin.init({ container: '#games', theme: 'dark' });
+  }
+</script>
 </body>
 </html>
