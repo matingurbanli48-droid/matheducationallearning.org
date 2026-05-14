@@ -98,41 +98,16 @@
     setInterval(draw, 33);
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2.1.7/dist/bare.cjs"></script>
+  <script src="/uv/uv.bundle.js"></script>
+  <script src="/uv/uv.config.js"></script>
   <script>
-    let scramjet;
-
-    window.addEventListener('load', async () => {
-      try {
-        const { ScramjetController } = $scramjetLoadController();
-        scramjet = new ScramjetController({
-          files: {
-            wasm: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.wasm.wasm",
-            all: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.all.js",
-            sync: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.sync.js",
-          }
-        });
-        await scramjet.init("/sw.js");
-
-        const connection = new BareMux.BareMuxConnection("https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2.1.7/dist/worker.js");
-        await connection.setTransport("https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.27/dist/index.mjs", [{
-          wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
-        }]);
-
-        if ("serviceWorker" in navigator) {
-          await navigator.serviceWorker.register("/sw.js");
-        }
-        console.log("Proxy ready!");
-      } catch(e) {
-        console.error("Proxy init error:", e);
-      }
-    });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
 
     async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
-      if (!scramjet) { alert('Proxy still loading, try again in a second!'); return; }
 
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
@@ -144,8 +119,7 @@
       }
 
       await navigator.serviceWorker.ready;
-      const encoded = scramjet.encodeUrl(url);
-      window.open(encoded, '_blank');
+      window.open(__uv$config.prefix + __uv$config.encodeUrl(url), '_blank');
     }
 
     document.getElementById('searchInput').addEventListener('keydown', e => {
