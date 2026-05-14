@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matins Awesome Website</title>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script>eruda.init();</script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #000; min-height: 100vh; }
@@ -74,18 +72,15 @@
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
     const fontSize = 14;
     let cols = Math.floor(canvas.width / fontSize);
     let drops = Array(cols).fill(1);
-
     function draw() {
       ctx.fillStyle = 'rgba(0,0,0,0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -103,8 +98,8 @@
     setInterval(draw, 33);
   </script>
 
-  <script src="/scram/scramjet.js"></script>
-  <script src="/baremux/bare.cjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2.1.7/dist/bare.cjs"></script>
   <script>
     let scramjet;
 
@@ -113,15 +108,15 @@
         const { ScramjetController } = $scramjetLoadController();
         scramjet = new ScramjetController({
           files: {
-            wasm: "/scram/scramjet.wasm.wasm",
-            all: "/scram/scramjet.all.js",
-            sync: "/scram/scramjet.sync.js",
+            wasm: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.wasm.wasm",
+            all: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.all.js",
+            sync: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@0.0.9/dist/scramjet.sync.js",
           }
         });
         await scramjet.init("/sw.js");
 
-        const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-        await connection.setTransport("/epoxy/index.mjs", [{
+        const connection = new BareMux.BareMuxConnection("https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2.1.7/dist/worker.js");
+        await connection.setTransport("https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.27/dist/index.mjs", [{
           wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
         }]);
 
