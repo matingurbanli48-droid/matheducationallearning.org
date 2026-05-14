@@ -7,7 +7,7 @@ const bare = createBareServer("/bare/");
 const app = express();
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "node_modules/@titaniumnetwork-dev/ultraviolet/dist")));
+app.use("/uv/", express.static(path.join(__dirname, "node_modules/@titaniumnetwork-dev/ultraviolet/dist")));
 
 const server = http.createServer((req, res) => {
   if (bare.shouldRoute(req)) {
@@ -25,4 +25,5 @@ server.on("upgrade", (req, socket, head) => {
   }
 });
 
-server.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`Running on port ${PORT}`));
