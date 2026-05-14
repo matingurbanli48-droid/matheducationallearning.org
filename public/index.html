@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matins Awesome Website</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; min-height: 100vh; }
+    canvas { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+    .title {
+      font-family: 'Courier New', monospace;
+      font-size: 2rem;
+      color: #00ff41;
+      text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+    }
+    .proxy-bar {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 1rem;
+    }
+    .proxy-bar input {
+      flex: 1;
+      padding: 10px 16px;
+      background: rgba(0,255,65,0.1);
+      border: 1px solid #00ff41;
+      border-radius: 6px;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      outline: none;
+    }
+    .proxy-bar input::placeholder { color: rgba(0,255,65,0.4); }
+    .proxy-bar button {
+      padding: 10px 20px;
+      background: #00ff41;
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .proxy-bar button:hover { background: #00cc33; }
+    #browser {
+      width: 100%;
+      max-width: 800px;
+      height: 60vh;
+      border: 1px solid #00ff41;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      display: none;
+    }
+    #games {
+      width: 100%;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="content">
+    <div class="title">matins awesome website</div>
+    <div class="proxy-bar">
+      <input id="searchInput" type="text" placeholder="Search or enter a URL..." />
+      <button onclick="navigate()">GO</button>
+    </div>
+    <iframe id="browser" frameborder="0"></iframe>
+    <div id="games"></div>
+  </div>
 
+  <script src="/uv/uv.bundle.js"></script>
+  <script src="/uv/uv.config.js"></script>
+  <script>
+    async function navigate() {
+      const val = document.getElementById('searchInput').value.trim();
+      if (!val) return;
+      let url;
+      if (val.startsWith('http://') || val.startsWith('https://')) {
+        url = val;
+      } else if (val.includes('.') && !val.includes(' ')) {
+        url = 'https://' + val;
+      } else {
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d';
+      }
+      const frame = document.getElementById('browser');
+      frame.style.display = 'block';
+      frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') navigate();
+    });
+
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    const fontSize = 14;
+    const cols = Math.floor(canvas.width / fontSize);
+    const drops = Array(cols).fill(1);
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px Courier New';
+      for (let i = 0; i < drops.length; i++) {
+        const ch = Math.random() < 0.5 ? '0' : '1';
+        ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 33);
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+  <script>
+    Lumin.init({ container: '#games', theme: 'dark' });
+  </script>
+</body>
+</html>
