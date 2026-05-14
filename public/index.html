@@ -101,9 +101,11 @@
   <script src="/uv/uv.bundle.js"></script>
   <script src="/uv/uv.config.js"></script>
   <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js");
-    }
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      console.log("SW registered:", reg);
+    }).catch(err => {
+      console.error("SW failed:", err);
+    });
 
     async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
