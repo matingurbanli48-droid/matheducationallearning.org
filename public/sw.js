@@ -1,8 +1,6 @@
-importScripts("/uv/uv.bundle.js");
-importScripts("/uv/uv.config.js");
-importScripts("/uv/uv.sw.js");
+importScripts("/scramjet/scramjet.worker.js");
 
-const sw = new UVServiceWorker();
+const sw = new ScramjetServiceWorker();
 
 self.addEventListener("fetch", (event) => {
   if (sw.route(event)) {
