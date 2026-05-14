@@ -84,10 +84,12 @@
 
   <script src="/uv/uv.bundle.js"></script>
   <script src="/uv/uv.config.js"></script>
+
   <script>
     async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
+
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
         url = val;
@@ -96,6 +98,9 @@
       } else {
         url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d';
       }
+
+      await navigator.serviceWorker.ready;
+
       const frame = document.getElementById('browser');
       frame.style.display = 'block';
       frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
@@ -131,10 +136,11 @@
     setInterval(draw, 33);
   </script>
 
-<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
   <script>
     Lumin.init({ container: '#games', theme: 'dark' });
   </script>
+
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").then(() => {
