@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import wisp from "@mercuryworkshop/wisp-js/server";
+import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -13,7 +13,10 @@ app.use("/baremux/", express.static(join(__dirname, "node_modules/@mercuryworksh
 app.use("/epoxy/", express.static(join(__dirname, "node_modules/@mercuryworkshop/epoxy-transport/dist")));
 
 const server = createServer(app);
-wisp.routeRequest(server);
+
+server.on("upgrade", (req, socket, head) => {
+  wisp.routeRequest(req, socket, head);
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Running on port ${PORT}`));
