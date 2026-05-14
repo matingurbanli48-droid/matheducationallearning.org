@@ -69,27 +69,72 @@
     <div id="games"></div>
   </div>
 
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const fontSize = 14;
+    let cols = Math.floor(canvas.width / fontSize);
+    let drops = Array(cols).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px Courier New';
+      cols = Math.floor(canvas.width / fontSize);
+      if (drops.length !== cols) drops = Array(cols).fill(1);
+      for (let i = 0; i < drops.length; i++) {
+        const ch = Math.random() < 0.5 ? '0' : '1';
+        ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 33);
+  </script>
+
   <script src="/scram/scramjet.js"></script>
   <script src="/baremux/bare.cjs"></script>
   <script>
-    const { ScramjetController } = $scramjetLoadController();
-    const scramjet = new ScramjetController({
-      files: {
-        wasm: "/scram/scramjet.wasm.wasm",
-        all: "/scram/scramjet.all.js",
-        sync: "/scram/scramjet.sync.js",
+    let scramjet;
+
+    window.addEventListener('load', async () => {
+      try {
+        const { ScramjetController } = $scramjetLoadController();
+        scramjet = new ScramjetController({
+          files: {
+            wasm: "/scram/scramjet.wasm.wasm",
+            all: "/scram/scramjet.all.js",
+            sync: "/scram/scramjet.sync.js",
+          }
+        });
+        await scramjet.init("/sw.js");
+
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+        await connection.setTransport("/epoxy/index.mjs", [{
+          wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
+        }]);
+
+        if ("serviceWorker" in navigator) {
+          await navigator.serviceWorker.register("/sw.js");
+        }
+      } catch(e) {
+        console.error("Proxy init error:", e);
       }
     });
-    scramjet.init("/sw.js");
-
-    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-    connection.setTransport("/epoxy/index.mjs", [{
-      wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
-    }]);
 
     async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
+      if (!scramjet) { alert('Proxy still loading, try again in a second!'); return; }
 
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
@@ -108,40 +153,9 @@
     document.getElementById('searchInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') navigate();
     });
-
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-    const fontSize = 14;
-    const cols = Math.floor(canvas.width / fontSize);
-    const drops = Array(cols).fill(1);
-    function draw() {
-      ctx.fillStyle = 'rgba(0,0,0,0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00ff41';
-      ctx.font = fontSize + 'px Courier New';
-      for (let i = 0; i < drops.length; i++) {
-        const ch = Math.random() < 0.5 ? '0' : '1';
-        ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(draw, 33);
   </script>
 
   <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
   <script>Lumin.init({ container: '#games', theme: 'dark' });</script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(err => console.error("SW failed:", err));
-    }
-  </script>
 </body>
 </html>
