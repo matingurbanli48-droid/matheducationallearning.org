@@ -55,37 +55,7 @@
       cursor: pointer;
     }
     .proxy-bar button:hover { background: #00cc33; }
-    .games-section {
-      width: 100%;
-      max-width: 800px;
-    }
-    .games-title {
-      color: #00ff41;
-      font-family: 'Courier New', monospace;
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 10px #00ff41;
-    }
-    .games-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-    .game-item {
-      text-align: center;
-    }
-    .game-item p {
-      color: #00ff41;
-      font-family: 'Courier New', monospace;
-      margin-bottom: 0.5rem;
-    }
-    .game-item iframe {
-      border: 1px solid #00ff41;
-      border-radius: 6px;
-      display: block;
-    }
+    #games { width: 100%; max-width: 800px; }
   </style>
 </head>
 <body>
@@ -96,23 +66,7 @@
       <input id="searchInput" type="text" placeholder="Search Google or enter a URL..." />
       <button onclick="navigate()">GO</button>
     </div>
-    <div class="games-section">
-      <div class="games-title">Games</div>
-      <div class="games-grid">
-        <div class="game-item">
-          <p>2048</p>
-          <iframe src="https://play2048.co/" width="350" height="500" frameborder="0"></iframe>
-        </div>
-        <div class="game-item">
-          <p>Snake</p>
-          <iframe src="https://playsnake.org/" width="350" height="500" frameborder="0"></iframe>
-        </div>
-        <div class="game-item">
-          <p>Tetris</p>
-          <iframe src="https://tetris.com/play-tetris" width="350" height="500" frameborder="0"></iframe>
-        </div>
-      </div>
-    </div>
+    <div id="games"></div>
   </div>
 
   <script>
@@ -160,6 +114,13 @@
     document.getElementById('searchInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') navigate();
     });
+  </script>
+
+  <script src="https://unpkg.com/@luminsdk/script@latest/lumin.min.js"></script>
+  <script>
+    if (typeof Lumin !== 'undefined') {
+      Lumin.init({ container: '#games', theme: 'dark' });
+    }
   </script>
 </body>
 </html>
