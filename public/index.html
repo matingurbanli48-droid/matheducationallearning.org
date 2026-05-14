@@ -131,9 +131,16 @@
     setInterval(draw, 33);
   </script>
 
-  <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
   <script>
     Lumin.init({ container: '#games', theme: 'dark' });
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then(() => {
+        console.log("SW registered");
+      }).catch(err => console.error("SW failed:", err));
+    }
   </script>
 </body>
 </html>
