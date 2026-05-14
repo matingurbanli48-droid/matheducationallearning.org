@@ -64,10 +64,7 @@
       margin-bottom: 2rem;
       display: none;
     }
-    #games {
-      width: 100%;
-      max-width: 800px;
-    }
+    #games { width: 100%; max-width: 800px; }
   </style>
 </head>
 <body>
@@ -82,28 +79,25 @@
     <div id="games"></div>
   </div>
 
-  <script src="/scramjet/scramjet.js"></script>
+  <script src="/scram/scramjet.js"></script>
+  <script src="/baremux/bare.cjs"></script>
   <script>
-    const controller = new ScramjetController({
-      prefix: "/scramjet/service/",
+    const { ScramjetController } = $scramjetLoadController();
+    const scramjet = new ScramjetController({
       files: {
-        wasm: "/scramjet/scramjet.wasm.js",
-        worker: "/scramjet/scramjet.worker.js",
-        client: "/scramjet/scramjet.client.js",
-        shared: "/scramjet/scramjet.shared.js",
-        sync: "/scramjet/scramjet.sync.js",
-      },
-      flags: {
-        serviceworkers: true,
+        wasm: "/scram/scramjet.wasm.wasm",
+        all: "/scram/scramjet.all.js",
+        sync: "/scram/scramjet.sync.js",
       }
     });
+    scramjet.init("/sw.js");
 
-    controller.init("/sw.js");
+    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+    connection.setTransport("/epoxy/index.mjs", [{ wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/` }]);
 
     async function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
-
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
         url = val;
@@ -112,12 +106,10 @@
       } else {
         url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d';
       }
-
       await navigator.serviceWorker.ready;
-
       const frame = document.getElementById('browser');
       frame.style.display = 'block';
-      frame.src = await controller.encodeUrl(url);
+      frame.src = scramjet.encodeUrl(url);
     }
 
     document.getElementById('searchInput').addEventListener('keydown', e => {
@@ -151,8 +143,6 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
-  <script>
-    Lumin.init({ container: '#games', theme: 'dark' });
-  </script>
+  <script>Lumin.init({ container: '#games', theme: 'dark' });</script>
 </body>
 </html>
