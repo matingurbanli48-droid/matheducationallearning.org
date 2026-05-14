@@ -63,7 +63,7 @@
   <div class="content">
     <div class="title">matins awesome website</div>
     <div class="proxy-bar">
-      <input id="searchInput" type="text" placeholder="Search or enter a URL..." />
+      <input id="searchInput" type="text" placeholder="Search Google or enter a URL..." />
       <button onclick="navigate()">GO</button>
     </div>
     <div id="games"></div>
@@ -96,32 +96,19 @@
       }
     }
     setInterval(draw, 33);
-  </script>
 
-  <script src="/uv/uv.bundle.js"></script>
-  <script src="/uv/uv.config.js"></script>
-  <script>
-    navigator.serviceWorker.register("/sw.js").then(reg => {
-      console.log("SW registered:", reg);
-    }).catch(err => {
-      console.error("SW failed:", err);
-    });
-
-    async function navigate() {
+    function navigate() {
       const val = document.getElementById('searchInput').value.trim();
       if (!val) return;
-
       let url;
       if (val.startsWith('http://') || val.startsWith('https://')) {
         url = val;
       } else if (val.includes('.') && !val.includes(' ')) {
         url = 'https://' + val;
       } else {
-        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(val) + '&kae=d';
+        url = 'https://www.google.com/search?q=' + encodeURIComponent(val);
       }
-
-      await navigator.serviceWorker.ready;
-      window.open(__uv$config.prefix + __uv$config.encodeUrl(url), '_blank');
+      window.open(url, '_blank');
     }
 
     document.getElementById('searchInput').addEventListener('keydown', e => {
